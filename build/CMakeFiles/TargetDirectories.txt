@@ -1,0 +1,3 @@
+/home/linuxdummy/log-analyzer/build/CMakeFiles/fla.dir
+/home/linuxdummy/log-analyzer/build/CMakeFiles/edit_cache.dir
+/home/linuxdummy/log-analyzer/build/CMakeFiles/rebuild_cache.dir

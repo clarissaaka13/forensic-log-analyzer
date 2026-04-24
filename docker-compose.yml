@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  log-analyzer:
+    build: .
+    container_name: log-analyzer
+    volumes:
+      - ./data:/app/data
+    command: ["./fla", "data/sample_auth.log", "--umbral", "3", "--ventana", "60"]
+

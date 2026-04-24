@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/fla.dir/main.cpp.o CMakeFiles/fla.dir/log_reader.cpp.o CMakeFiles/fla.dir/auth_parser.cpp.o CMakeFiles/fla.dir/analyzer.cpp.o CMakeFiles/fla.dir/reporter.cpp.o -o fla 
