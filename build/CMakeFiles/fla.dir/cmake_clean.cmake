@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/fla.dir/analyzer.cpp.o.d"
   "CMakeFiles/fla.dir/auth_parser.cpp.o"
   "CMakeFiles/fla.dir/auth_parser.cpp.o.d"
+  "CMakeFiles/fla.dir/file_watcher.cpp.o"
+  "CMakeFiles/fla.dir/file_watcher.cpp.o.d"
   "CMakeFiles/fla.dir/log_reader.cpp.o"
   "CMakeFiles/fla.dir/log_reader.cpp.o.d"
   "CMakeFiles/fla.dir/main.cpp.o"

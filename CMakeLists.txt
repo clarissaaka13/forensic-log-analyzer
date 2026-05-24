@@ -4,7 +4,6 @@ project(LogAnalyzer CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# warnings estrictos 
 add_compile_options(-Wall -Wextra -Wpedantic)
 
 include_directories(${CMAKE_SOURCE_DIR})
@@ -15,6 +14,5 @@ add_executable(fla
     auth_parser.cpp
     analyzer.cpp
     reporter.cpp
+    file_watcher.cpp   # ← línea nueva
 )
-
-

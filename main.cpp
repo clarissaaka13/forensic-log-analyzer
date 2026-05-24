@@ -1,9 +1,3 @@
-
-// acepta argumentos opcionales:
-   // --umbral N   : intentos antes de disparar alerta (default config.h)
-    //--ventana N  : segundos de la ventana de tiempo  (default config.h)
-
-
 #include <iostream>
 #include <string>
 #include <csignal>
@@ -15,14 +9,14 @@
 #include "auth_parser.h"
 #include "analyzer.h"
 #include "reporter.h"
+#include "file_watcher.h"
 
-static std::atomic<bool> g_interrupted{false};
+std::atomic<bool> g_interrupted{false};
 
 void manejadorSenal(int /*signum*/) {
     g_interrupted = true;
 }
 
-// imprime cómo usar el programa
 void printUso(const char* prog) {
     std::cout << Color::CYAN << "Uso: " << Color::RESET
               << prog << " <archivo.log> [opciones]\n\n"
@@ -30,23 +24,24 @@ void printUso(const char* prog) {
               << "  --umbral N   Intentos para disparar alerta (default: "
               << UMBRAL_INTENTOS << ")\n"
               << "  --ventana N  Ventana de tiempo en segundos (default: "
-              << VENTANA_SEGUNDOS << ")\n\n"
-              << "Ejemplo:\n"
+              << VENTANA_SEGUNDOS << ")\n"
+              << "  --watch      Monitorea el archivo en tiempo real\n\n"
+              << "Ejemplos:\n"
+              << "  " << prog << " data/sample_auth.log\n"
+              << "  " << prog << " data/sample_auth.log --watch\n"
               << "  " << prog << " data/sample_auth.log --umbral 5 --ventana 120\n";
 }
 
 int main(int argc, char* argv[]) {
     std::signal(SIGINT, manejadorSenal);
 
-    // valores por defecto desde config.h
-    std::string rutaLog  = LOG_DEFAULT;
-    int umbral           = UMBRAL_INTENTOS;
-    int ventana          = VENTANA_SEGUNDOS;
+    std::string rutaLog = LOG_DEFAULT;
+    int  umbral         = UMBRAL_INTENTOS;
+    int  ventana        = VENTANA_SEGUNDOS;
+    bool modoWatch      = false;
 
-    // parseo de argumentos
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
-
         if (arg == "--help" || arg == "-h") {
             printUso(argv[0]);
             return 0;
@@ -57,48 +52,75 @@ int main(int argc, char* argv[]) {
         else if (arg == "--ventana" && i + 1 < argc) {
             ventana = std::stoi(argv[++i]);
         }
-        else if (arg[0] != '-') {
-            // si no empieza con '-', es la ruta del archivo
+        else if (arg == "--watch") {
+            modoWatch = true;
+        }
+        else if (arg[0] != '-' && rutaLog == LOG_DEFAULT) {
             rutaLog = arg;
         }
-    }
-
-    LogReader reader(rutaLog);
-    if (!reader.ok()) {
-        std::cerr << Color::RED << "Error: " << Color::RESET
-                  << "no se pudo abrir el archivo: " << rutaLog << "\n";
-        return 1;
     }
 
     std::cout << Color::BOLD << "\nLog Analyzer\n" << Color::RESET
               << "Archivo : " << Color::YELLOW << rutaLog  << Color::RESET << "\n"
               << "Umbral  : " << Color::YELLOW << umbral   << Color::RESET << " intentos\n"
               << "Ventana : " << Color::YELLOW << ventana  << Color::RESET << " segundos\n"
-              << Color::CYAN << "(Ctrl+C para reporte parcial)\n" << Color::RESET << "\n";
+              << "Modo    : " << Color::YELLOW
+              << (modoWatch ? "watch (tiempo real)" : "normal")
+              << Color::RESET << "\n\n";
 
-    // pasamos umbral y ventana al Analyzer
     AuthParser parser;
     Analyzer   analyzer(umbral, ventana);
-    std::string line;
+    Reporter   reporter;
 
-    while (!g_interrupted && reader.nextLine(line)) {
+    size_t alertasImpresas = 0;
+
+    auto procesarLinea = [&](const std::string& line) {
         Event ev;
         if (parser.tryParseAuthLine(line, ev)) {
             analyzer.consume(ev);
+
+            if (modoWatch) {
+                const auto& alertas = analyzer.alertas();
+                while (alertasImpresas < alertas.size()) {
+                    const auto& a = alertas[alertasImpresas];
+                    std::cout << Color::RED << "[!] ALERTA: "
+                              << Color::YELLOW << a.first << Color::RESET
+                              << " -> " << a.second
+                              << " intentos en ventana de tiempo\n";
+                    alertasImpresas++;
+                }
+            }
+        }
+    };
+
+    if (modoWatch) {
+        FileWatcher watcher;
+        watcher.watch(rutaLog, procesarLinea);
+        std::cout << Color::YELLOW
+                  << "\n[watch detenido - reporte final:]\n"
+                  << Color::RESET;
+    } else {
+        LogReader reader(rutaLog);
+        if (!reader.ok()) {
+            std::cerr << Color::RED << "Error: no se pudo abrir: "
+                      << rutaLog << Color::RESET << "\n";
+            return 1;
+        }
+        std::cout << Color::CYAN << "(Ctrl+C para reporte parcial)\n\n"
+                  << Color::RESET;
+
+        std::string line;
+        while (!g_interrupted && reader.nextLine(line)) {
+            procesarLinea(line);
+        }
+
+        if (g_interrupted) {
+            std::cout << Color::YELLOW
+                      << "\n[Interrumpido - reporte parcial:]\n"
+                      << Color::RESET;
         }
     }
 
-    if (g_interrupted) {
-        std::cout << Color::YELLOW
-                  << "\n[Interrumpido — reporte parcial:]\n"
-                  << Color::RESET;
-    }
-
-    Reporter reporter;
     reporter.printSummary(analyzer);
-
     return 0;
 }
-
-
-

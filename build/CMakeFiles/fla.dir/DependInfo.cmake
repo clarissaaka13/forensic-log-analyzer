@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/linuxdummy/log-analyzer/analyzer.cpp" "CMakeFiles/fla.dir/analyzer.cpp.o" "gcc" "CMakeFiles/fla.dir/analyzer.cpp.o.d"
   "/home/linuxdummy/log-analyzer/auth_parser.cpp" "CMakeFiles/fla.dir/auth_parser.cpp.o" "gcc" "CMakeFiles/fla.dir/auth_parser.cpp.o.d"
+  "/home/linuxdummy/log-analyzer/file_watcher.cpp" "CMakeFiles/fla.dir/file_watcher.cpp.o" "gcc" "CMakeFiles/fla.dir/file_watcher.cpp.o.d"
   "/home/linuxdummy/log-analyzer/log_reader.cpp" "CMakeFiles/fla.dir/log_reader.cpp.o" "gcc" "CMakeFiles/fla.dir/log_reader.cpp.o.d"
   "/home/linuxdummy/log-analyzer/main.cpp" "CMakeFiles/fla.dir/main.cpp.o" "gcc" "CMakeFiles/fla.dir/main.cpp.o.d"
   "/home/linuxdummy/log-analyzer/reporter.cpp" "CMakeFiles/fla.dir/reporter.cpp.o" "gcc" "CMakeFiles/fla.dir/reporter.cpp.o.d"

@@ -177,6 +177,30 @@ auth_parser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/auth_parser.cpp.s
 .PHONY : auth_parser.cpp.s
 
+file_watcher.o: file_watcher.cpp.o
+.PHONY : file_watcher.o
+
+# target to build an object file
+file_watcher.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/file_watcher.cpp.o
+.PHONY : file_watcher.cpp.o
+
+file_watcher.i: file_watcher.cpp.i
+.PHONY : file_watcher.i
+
+# target to preprocess a source file
+file_watcher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/file_watcher.cpp.i
+.PHONY : file_watcher.cpp.i
+
+file_watcher.s: file_watcher.cpp.s
+.PHONY : file_watcher.s
+
+# target to generate assembly for a file
+file_watcher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/file_watcher.cpp.s
+.PHONY : file_watcher.cpp.s
+
 log_reader.o: log_reader.cpp.o
 .PHONY : log_reader.o
 
@@ -264,6 +288,9 @@ help:
 	@echo "... auth_parser.o"
 	@echo "... auth_parser.i"
 	@echo "... auth_parser.s"
+	@echo "... file_watcher.o"
+	@echo "... file_watcher.i"
+	@echo "... file_watcher.s"
 	@echo "... log_reader.o"
 	@echo "... log_reader.i"
 	@echo "... log_reader.s"
