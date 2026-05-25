@@ -1,0 +1,15 @@
+# Reporte generado: 2026-05-25 02:09:59
+
+ALERTAS DE FUERZA BRUTA
+IP,Intentos en ventana,Tipo
+192.168.0.10,3,Fuerza bruta
+10.10.10.10,3,Fuerza bruta
+
+FAILED PASSWORD POR IP
+IP,Total intentos
+10.10.10.10,20
+192.168.0.10,5
+
+INVALID USER POR IP
+IP,Total intentos
+10.0.0.5,1

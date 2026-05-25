@@ -14,5 +14,6 @@ add_executable(fla
     auth_parser.cpp
     analyzer.cpp
     reporter.cpp
-    file_watcher.cpp   # ← línea nueva
+    file_watcher.cpp
+    csv_exporter.cpp
 )

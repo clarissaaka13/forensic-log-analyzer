@@ -177,6 +177,30 @@ auth_parser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/auth_parser.cpp.s
 .PHONY : auth_parser.cpp.s
 
+csv_exporter.o: csv_exporter.cpp.o
+.PHONY : csv_exporter.o
+
+# target to build an object file
+csv_exporter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/csv_exporter.cpp.o
+.PHONY : csv_exporter.cpp.o
+
+csv_exporter.i: csv_exporter.cpp.i
+.PHONY : csv_exporter.i
+
+# target to preprocess a source file
+csv_exporter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/csv_exporter.cpp.i
+.PHONY : csv_exporter.cpp.i
+
+csv_exporter.s: csv_exporter.cpp.s
+.PHONY : csv_exporter.s
+
+# target to generate assembly for a file
+csv_exporter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fla.dir/build.make CMakeFiles/fla.dir/csv_exporter.cpp.s
+.PHONY : csv_exporter.cpp.s
+
 file_watcher.o: file_watcher.cpp.o
 .PHONY : file_watcher.o
 
@@ -288,6 +312,9 @@ help:
 	@echo "... auth_parser.o"
 	@echo "... auth_parser.i"
 	@echo "... auth_parser.s"
+	@echo "... csv_exporter.o"
+	@echo "... csv_exporter.i"
+	@echo "... csv_exporter.s"
 	@echo "... file_watcher.o"
 	@echo "... file_watcher.i"
 	@echo "... file_watcher.s"

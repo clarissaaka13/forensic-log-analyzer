@@ -10,10 +10,11 @@
 #include "analyzer.h"
 #include "reporter.h"
 #include "file_watcher.h"
+#include "csv_exporter.h"
 
 std::atomic<bool> g_interrupted{false};
 
-void manejadorSenal(int /*signum*/) {
+void manejadorSenal(int) {
     g_interrupted = true;
 }
 
@@ -21,21 +22,23 @@ void printUso(const char* prog) {
     std::cout << Color::CYAN << "Uso: " << Color::RESET
               << prog << " <archivo.log> [opciones]\n\n"
               << "Opciones:\n"
-              << "  --umbral N   Intentos para disparar alerta (default: "
+              << "  --umbral N      Intentos para disparar alerta (default: "
               << UMBRAL_INTENTOS << ")\n"
-              << "  --ventana N  Ventana de tiempo en segundos (default: "
+              << "  --ventana N     Ventana de tiempo en segundos (default: "
               << VENTANA_SEGUNDOS << ")\n"
-              << "  --watch      Monitorea el archivo en tiempo real\n\n"
+              << "  --watch         Monitorea el archivo en tiempo real\n"
+              << "  --csv <archivo> Exporta reporte a .csv\n\n"
               << "Ejemplos:\n"
               << "  " << prog << " data/sample_auth.log\n"
               << "  " << prog << " data/sample_auth.log --watch\n"
-              << "  " << prog << " data/sample_auth.log --umbral 5 --ventana 120\n";
+              << "  " << prog << " data/sample_auth.log --csv reporte.csv\n";
 }
 
 int main(int argc, char* argv[]) {
     std::signal(SIGINT, manejadorSenal);
 
     std::string rutaLog = LOG_DEFAULT;
+    std::string rutaCsv = "";
     int  umbral         = UMBRAL_INTENTOS;
     int  ventana        = VENTANA_SEGUNDOS;
     bool modoWatch      = false;
@@ -55,18 +58,26 @@ int main(int argc, char* argv[]) {
         else if (arg == "--watch") {
             modoWatch = true;
         }
+        else if (arg == "--csv" && i + 1 < argc) {
+            rutaCsv = argv[++i];
+        }
         else if (arg[0] != '-' && rutaLog == LOG_DEFAULT) {
             rutaLog = arg;
         }
     }
 
     std::cout << Color::BOLD << "\nLog Analyzer\n" << Color::RESET
-              << "Archivo : " << Color::YELLOW << rutaLog  << Color::RESET << "\n"
-              << "Umbral  : " << Color::YELLOW << umbral   << Color::RESET << " intentos\n"
-              << "Ventana : " << Color::YELLOW << ventana  << Color::RESET << " segundos\n"
+              << "Archivo : " << Color::YELLOW << rutaLog << Color::RESET << "\n"
+              << "Umbral  : " << Color::YELLOW << umbral  << Color::RESET << " intentos\n"
+              << "Ventana : " << Color::YELLOW << ventana << Color::RESET << " segundos\n"
               << "Modo    : " << Color::YELLOW
               << (modoWatch ? "watch (tiempo real)" : "normal")
-              << Color::RESET << "\n\n";
+              << Color::RESET << "\n";
+
+    if (!rutaCsv.empty()) {
+        std::cout << "CSV     : " << Color::YELLOW << rutaCsv << Color::RESET << "\n";
+    }
+    std::cout << "\n";
 
     AuthParser parser;
     Analyzer   analyzer(umbral, ventana);
@@ -78,7 +89,6 @@ int main(int argc, char* argv[]) {
         Event ev;
         if (parser.tryParseAuthLine(line, ev)) {
             analyzer.consume(ev);
-
             if (modoWatch) {
                 const auto& alertas = analyzer.alertas();
                 while (alertasImpresas < alertas.size()) {
@@ -122,5 +132,16 @@ int main(int argc, char* argv[]) {
     }
 
     reporter.printSummary(analyzer);
+
+    if (!rutaCsv.empty()) {
+        CsvExporter exporter;
+        if (exporter.exportar(analyzer, rutaCsv)) {
+            std::cout << Color::GREEN << "Reporte CSV guardado en: "
+                      << Color::YELLOW << rutaCsv
+                      << Color::RESET << "\n\n";
+        }
+    }
+
     return 0;
 }
+
